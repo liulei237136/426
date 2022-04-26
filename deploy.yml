@@ -1,0 +1,33 @@
+import:
+  - recipe/laravel.php
+  - contrib/php-fpm.php
+  - contrib/npm.php
+
+config:
+  application: '426'
+  repository: 'git@github.com:liulei237136/426.git'
+  php_fpm_version: '8.0'
+  ssh_multiplexing: false
+hosts:
+  prod:
+    remote_user: ploi
+    hostname: '426.tool365.cn'
+    deploy_path: '~/{{hostname}}'
+
+tasks:
+  deploy:
+    - deploy:prepare
+    - deploy:vendors
+    - artisan:storage:link
+    - artisan:view:cache
+    - artisan:config:cache
+    - artisan:migrate
+    - npm:install
+    - npm:run:prod
+    - deploy:publish
+    - php-fpm:reload
+  npm:run:prod:
+    - run: 'cd {{release_or_current_path}} && npm run prod'
+
+after:
+  deploy:failed: deploy:unlock
