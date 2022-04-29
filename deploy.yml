@@ -5,14 +5,13 @@ import:
 
 config:
   application: '426'
-  repository: 'git@github.com:liulei237136/426.git'
+  repository: 'https://github.com/liulei237136/426.git'
   php_fpm_version: '8.0'
-  ssh_multiplexing: false
 hosts:
   prod:
-    remote_user: ploi
+    remote_user: root
     hostname: '426.tool365.cn'
-    deploy_path: '~/{{hostname}}'
+    deploy_path: '/www/wwwroot/426.tool365.cn/'
 
 tasks:
   deploy:
@@ -26,8 +25,8 @@ tasks:
     - npm:run:prod
     - deploy:publish
     - php-fpm:reload
-  npm:run:prod:
-    - run: 'cd {{release_or_current_path}} && npm run prod'
+  # npm:run:prod:
+  #   - run: 'cd {{release_or_current_path}} && npm run prod'
 
 after:
   deploy:failed: deploy:unlock
